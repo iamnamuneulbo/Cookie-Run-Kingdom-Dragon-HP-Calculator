@@ -10,7 +10,8 @@
     <v-slider
       v-model="slider_lv"
       thumb-label
-      min="1"
+      color="red"
+      :min="minLv"
       :max="maxLv"
     >
     <template v-slot:append>
@@ -25,13 +26,14 @@
                 ></v-text-field>
               </template>
     </v-slider>
-    
+
     <h3>
       Dragon HP(%)
     </h3>
     <v-slider
       v-model="slider_hp"
       thumb-label
+      color="red"
       :min="minHP"
       :max="maxHP"
       @input="updateHp"
@@ -51,7 +53,17 @@
     <h3>
       Full HP
     </h3>
-    <p class="pl-2 pb-4" @click.stop.prevent="copyTxt">
+    <v-btn
+      text
+      icon
+      outlined
+      id="copyBtn"
+      class="mr-3"
+      @click.stop.prevent="copyTxt"
+    >
+      <v-icon small>mdi-content-copy</v-icon>
+    </v-btn>
+    <p class="pl-2 pb-4">
       Lv.{{slider_lv}}<br/>
       {{dragonHP[slider_lv].toLocaleString()}}<br/>
       {{calTxt(dragonHP[slider_lv] / 10000)}}
@@ -61,6 +73,16 @@
     <h3>
       Left HP
     </h3>
+    <v-btn
+      text
+      icon
+      outlined
+      id="copyBtn"
+      class="mr-3"
+      @click.stop.prevent="copyTxt"
+    >
+      <v-icon small>mdi-content-copy</v-icon>
+    </v-btn>
     <p class="pl-2 pb-4" @click.stop.prevent="copyTxt">
       Lv.{{slider_lv}} | {{slider_hp}}%<br/>
       {{calMinHP().toLocaleString()}} ~ {{calMaxHP().toLocaleString()}}<br/>
@@ -197,7 +219,7 @@
           return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP() / 10000) + " ~ " + this.calTxt(this.calMaxHP() / 10000);
       },
       copyTxt(event) {
-          let target = event.currentTarget.nextSibling;
+          let target = event.currentTarget.nextSibling.nextSibling;
 
           target.setAttribute('type', 'text')
           target.select()
@@ -218,3 +240,9 @@
     }
   }
 </script>
+<style scoped>
+#copyBtn {
+  position: absolute;
+  right: 0;
+}
+</style>
