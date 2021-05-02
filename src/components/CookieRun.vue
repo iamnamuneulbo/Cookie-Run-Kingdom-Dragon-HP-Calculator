@@ -19,8 +19,9 @@
                   class="mt-0 pt-0"
                   type="number"
                   style="width: 60px"
+                  :min="minLv"
                   :max="maxLv"
-                  @input="updateValue"
+                  @input="updateLv"
                 ></v-text-field>
               </template>
     </v-slider>
@@ -31,8 +32,9 @@
     <v-slider
       v-model="slider_hp"
       thumb-label
-      min="1"
-      max="99"
+      :min="minHP"
+      :max="maxHP"
+      @input="updateHp"
     >
     <template v-slot:append>
                 <v-text-field
@@ -40,6 +42,8 @@
                   class="mt-0 pt-0"
                   type="number"
                   style="width: 60px"
+                  :min="minHP"
+                  :max="maxHP"
                 ></v-text-field>
               </template>
     </v-slider>
@@ -47,17 +51,37 @@
     <h3>
       Full HP
     </h3>
-    <p class="pl-2 pb-4">
-      Lv.{{slider_lv}} | {{dragonHP[slider_lv].toLocaleString()}} | {{Math.floor(dragonHP[slider_lv] / 1000)}}K
+    <p class="pl-2 pb-4" @click.stop.prevent="copyTxt">
+      Lv.{{slider_lv}}<br/>
+      {{dragonHP[slider_lv].toLocaleString()}}<br/>
+      {{calTxt(dragonHP[slider_lv] / 10000)}}
     </p>
+    <input type="hidden" :value="fullHPTxt()">
 
     <h3>
       Left HP
     </h3>
-    <p class="pl-2">
+    <p class="pl-2 pb-4" @click.stop.prevent="copyTxt">
+      Lv.{{slider_lv}} | {{slider_hp}}%<br/>
       {{calMinHP().toLocaleString()}} ~ {{calMaxHP().toLocaleString()}}<br/>
-      {{Math.floor(calMinHP() / 1000)}}K ~ {{Math.floor(calMaxHP() / 1000)}}K
+      {{calTxt(calMinHP() / 10000)}} ~ {{calTxt(calMaxHP() / 10000)}}
     </p>
+    <input type="hidden" :value="leftHPTxt()">
+
+    <v-expand-transition>
+      <v-alert v-show="alertSuccess"
+      dense
+      outlined
+      type="success"
+      >copied!</v-alert>
+    </v-expand-transition>
+    <v-expand-transition>
+      <v-alert v-show="alertFail"
+      dense
+      outlined
+      type="error"
+      >unable to copy</v-alert>
+    </v-expand-transition>
   </v-container>
 </template>
 
@@ -66,7 +90,12 @@
     name: 'CookieRun',
 
     data: () => ({
+      alertSuccess: false,
+      alertFail: false,
+      minLv: 1,
       maxLv: 60,
+      minHP: 1,
+      maxHP: 99,
       slider_lv: 20,
       slider_hp: 50,
       dragonHP: [
@@ -134,18 +163,58 @@
         ],
     }),
     methods: {
-      updateValue() {
+      updateLv() {
         if (this.maxLv < this.slider_lv) {
           this.slider_lv = this.maxLv;
+        }
+        else if (1 > this.slider_lv) {
+          this.slider_lv = 1;
+        }
+        this.$forceUpdate()
+      },
+      updateHp() {
+        if (this.maxHP < this.slider_hp) {
+          this.slider_hp = this.maxHP;
+        }
+        else if (this.minHP > this.slider_hp) {
+          this.slider_hp = this.minHP;
         }
         this.$forceUpdate()
       },
       calMinHP() {
-        return this.dragonHP[this.slider_lv] * this.slider_hp / 100
+        return this.dragonHP[this.slider_lv] * this.slider_hp / 100;
       },
       calMaxHP() {
-        return this.dragonHP[this.slider_lv] * (this.slider_hp + 1) / 100 - 1
-      }
+        return this.dragonHP[this.slider_lv] * (this.slider_hp + 1) / 100 - 1;
+      },
+      calTxt(value) {
+          return Math.floor(value) + "만";
+      },
+      fullHPTxt() {
+          return "Lv." + this.slider_lv + " | Full HP: " + this.calTxt(this.dragonHP[this.slider_lv] / 10000);
+      },
+      leftHPTxt() {
+          return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP() / 10000) + " ~ " + this.calTxt(this.calMaxHP() / 10000);
+      },
+      copyTxt(event) {
+          let target = event.currentTarget.nextSibling;
+
+          target.setAttribute('type', 'text')
+          target.select()
+
+          try {
+            document.execCommand('copy');
+            this.alertSuccess = true;
+            setTimeout(() => { this.alertSuccess = false }, 1000);
+          } catch (err) {
+            this.alertFail = true;
+            setTimeout(() => { this.alertFail = false }, 1000);
+          }
+
+          /* unselect the range */
+          target.setAttribute('type', 'hidden')
+          window.getSelection().removeAllRanges()
+        },
     }
   }
 </script>

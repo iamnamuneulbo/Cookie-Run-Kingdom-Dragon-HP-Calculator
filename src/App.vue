@@ -5,7 +5,11 @@
     backgroundRepeat: `no-repeat`,
     backgroundSize: `contain`
     }">
-    <v-main>
+    <v-main :style="{
+      minWidth: `400px`,
+      maxWidth: `400px`,
+      margin: `auto`
+      }">
       <CookieRun/>
     </v-main>
   </v-app>
