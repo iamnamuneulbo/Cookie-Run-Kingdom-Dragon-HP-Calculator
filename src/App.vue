@@ -6,7 +6,7 @@
     backgroundSize: `contain`
     }">
     <v-main :style="{
-      minWidth: `400px`,
+      minWidth: `Math.min(400px, windowWidth)`,
       maxWidth: `400px`,
       margin: `auto`
       }">
@@ -26,7 +26,12 @@ export default {
   },
 
   data: () => ({
-    //
+    windowWidth: window.innerWidth
   }),
+  mounted() {
+      window.onresize = () => {
+          this.windowWidth = window.innerWidth
+      }
+  }
 };
 </script>
