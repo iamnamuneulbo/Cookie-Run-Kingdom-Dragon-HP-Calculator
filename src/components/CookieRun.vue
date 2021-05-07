@@ -13,6 +13,7 @@
       color="red"
       :min="minLv"
       :max="maxLv"
+      @input="setCookieLv"
     >
     <template v-slot:append>
                 <v-text-field
@@ -36,7 +37,7 @@
       color="red"
       :min="minHP"
       :max="maxHP"
-      @input="updateHp"
+      @input="setCookieHp"
     >
     <template v-slot:append>
                 <v-text-field
@@ -46,6 +47,7 @@
                   style="width: 60px"
                   :min="minHP"
                   :max="maxHP"
+                  @input="updateHp"
                 ></v-text-field>
               </template>
     </v-slider>
@@ -203,6 +205,12 @@
         }
         this.$forceUpdate()
       },
+      setCookieLv() {
+        this.$cookies.set("cookieLv", this.slider_lv)
+      },
+      setCookieHp() {
+        this.$cookies.set("cookieHp", this.slider_hp)
+      },
       calMinHP() {
         return this.dragonHP[this.slider_lv] * this.slider_hp / 100;
       },
@@ -237,6 +245,17 @@
           target.setAttribute('type', 'hidden')
           window.getSelection().removeAllRanges()
         },
+    },
+    created() {
+      if (this.$cookies.isKey("cookieLv")) {
+        this.slider_lv = this.$cookies.get("cookieLv");
+        console.log("cookieLv: " + this.$cookies.get("cookieLv"))
+      }
+      
+      if (this.$cookies.isKey("cookieHp")) {
+        this.slider_hp = this.$cookies.get("cookieHp");
+        console.log("cookieHp: " + this.$cookies.get("cookieHp"))
+      }
     }
   }
 </script>
