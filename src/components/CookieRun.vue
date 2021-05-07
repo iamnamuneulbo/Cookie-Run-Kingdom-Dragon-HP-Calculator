@@ -194,7 +194,7 @@
         else if (1 > this.slider_lv) {
           this.slider_lv = 1;
         }
-        this.$forceUpdate()
+        this.$forceUpdate();
       },
       updateHp() {
         if (this.maxHP < this.slider_hp) {
@@ -203,13 +203,13 @@
         else if (this.minHP > this.slider_hp) {
           this.slider_hp = this.minHP;
         }
-        this.$forceUpdate()
+        this.$forceUpdate();
       },
       setCookieLv() {
-        this.$cookies.set("cookieLv", this.slider_lv)
+        this.$cookies.set("cookieLv", this.slider_lv);
       },
       setCookieHp() {
-        this.$cookies.set("cookieHp", this.slider_hp)
+        this.$cookies.set("cookieHp", this.slider_hp);
       },
       calMinHP() {
         return this.dragonHP[this.slider_lv] * this.slider_hp / 100;
@@ -229,8 +229,8 @@
       copyTxt(event) {
           let target = event.currentTarget.nextSibling.nextSibling;
 
-          target.setAttribute('type', 'text')
-          target.select()
+          target.setAttribute('type', 'text');
+          target.select();
 
           try {
             document.execCommand('copy');
@@ -242,19 +242,17 @@
           }
 
           /* unselect the range */
-          target.setAttribute('type', 'hidden')
-          window.getSelection().removeAllRanges()
+          target.setAttribute('type', 'hidden');
+          window.getSelection().removeAllRanges();
         },
     },
     created() {
       if (this.$cookies.isKey("cookieLv")) {
         this.slider_lv = this.$cookies.get("cookieLv");
-        console.log("cookieLv: " + this.$cookies.get("cookieLv"))
       }
       
       if (this.$cookies.isKey("cookieHp")) {
         this.slider_hp = this.$cookies.get("cookieHp");
-        console.log("cookieHp: " + this.$cookies.get("cookieHp"))
       }
     }
   }
