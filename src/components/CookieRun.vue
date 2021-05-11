@@ -9,23 +9,28 @@
     </h3>
     <v-slider
       v-model="slider_lv"
-      thumb-label
+      thumb-label="always"
       color="red"
       :min="minLv"
       :max="maxLv"
-      @input="setCookieLv"
     >
-    <template v-slot:append>
-                <v-text-field
-                  v-model="slider_lv"
-                  class="mt-0 pt-0"
-                  type="number"
-                  style="width: 60px"
-                  :min="minLv"
-                  :max="maxLv"
-                  @input="updateLv"
-                ></v-text-field>
-              </template>
+      <template v-slot:prepend>
+        <v-icon
+          @mousedown="lvDecBtnDown"
+          @mouseup="lvDecBtnUp"
+        >
+          mdi-minus
+        </v-icon>
+      </template>
+
+      <template v-slot:append>
+        <v-icon
+          @mousedown="lvIncBtnDown"
+          @mouseup="lvIncBtnUp"
+        >
+          mdi-plus
+        </v-icon>
+      </template>
     </v-slider>
 
     <h3>
@@ -33,23 +38,28 @@
     </h3>
     <v-slider
       v-model="slider_hp"
-      thumb-label
+      thumb-label="always"
       color="red"
       :min="minHP"
       :max="maxHP"
-      @input="setCookieHp"
-    >
-    <template v-slot:append>
-                <v-text-field
-                  v-model="slider_hp"
-                  class="mt-0 pt-0"
-                  type="number"
-                  style="width: 60px"
-                  :min="minHP"
-                  :max="maxHP"
-                  @input="updateHp"
-                ></v-text-field>
-              </template>
+    >   
+      <template v-slot:prepend>
+        <v-icon
+          @mousedown="hpDecBtnDown"
+          @mouseup="hpDecBtnUp"
+        >
+          mdi-minus
+        </v-icon>
+      </template>
+
+      <template v-slot:append>
+        <v-icon
+          @mousedown="hpIncBtnDown"
+          @mouseup="hpIncBtnUp"
+        >
+          mdi-plus
+        </v-icon>
+      </template>
     </v-slider>
 
     <h3>
@@ -122,6 +132,10 @@
       maxHP: 99,
       slider_lv: 20,
       slider_hp: 50,
+      isLvIncBtnDown: false,
+      isLvDecBtnDown: false,
+      isHpIncBtnDown: false,
+      isHpDecBtnDown: false,
       dragonHP: [
         0,
         3000000,
@@ -187,23 +201,51 @@
         ],
     }),
     methods: {
-      updateLv() {
-        if (this.maxLv < this.slider_lv) {
-          this.slider_lv = this.maxLv;
-        }
-        else if (1 > this.slider_lv) {
-          this.slider_lv = 1;
-        }
-        this.$forceUpdate();
+      lvIncBtnDown() {
+        this.isLvIncBtnDown = true;
+        this.addLv(1);
       },
-      updateHp() {
-        if (this.maxHP < this.slider_hp) {
-          this.slider_hp = this.maxHP;
+      lvIncBtnUp() {
+        this.isLvIncBtnDown = false;
+      },
+      lvDecBtnDown() {
+        this.isLvDecBtnDown = true;
+        this.addLv(-1);
+      },
+      lvDecBtnUp() {
+        this.isLvDecBtnDown = false;
+      },
+      hpIncBtnDown() {
+        this.isHpIncBtnDown = true;
+        this.addHp(1);
+      },
+      hpIncBtnUp() {
+        this.isHpIncBtnDown = false;
+      },
+      hpDecBtnDown() {
+        this.isHpDecBtnDown = true;
+        this.addHp(-1);
+      },
+      hpDecBtnUp() {
+        this.isHpDecBtnDown = false;
+      },
+      addLv(val) {
+        if (this.isLvDecBtnDown || this.isLvIncBtnDown) {
+          this.slider_lv += val;
+
+          setTimeout(() => {
+            this.addLv(val);
+          }, 200);
         }
-        else if (this.minHP > this.slider_hp) {
-          this.slider_hp = this.minHP;
+      },
+      addHp(val) {
+        if (this.isHpDecBtnDown || this.isHpIncBtnDown) {
+          this.slider_hp += val;
+
+          setTimeout(() => {
+            this.addHp(val);
+          }, 200);
         }
-        this.$forceUpdate();
       },
       setCookieLv() {
         this.$cookies.set("cookieLv", this.slider_lv);
@@ -254,6 +296,10 @@
       if (this.$cookies.isKey("cookieHp")) {
         this.slider_hp = this.$cookies.get("cookieHp");
       }
+    },
+    watch: {
+      'slider_lv': 'setCookieLv',
+      'slider_hp': 'setCookieHp'
     }
   }
 </script>
