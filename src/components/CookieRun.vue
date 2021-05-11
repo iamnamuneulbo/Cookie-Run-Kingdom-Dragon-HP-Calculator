@@ -16,8 +16,9 @@
     >
       <template v-slot:prepend>
         <v-icon
-          @mousedown="lvDecBtnDown"
-          @mouseup="lvDecBtnUp"
+          @touchstart="lvDecBtnDown"
+          @touchend="lvDecBtnUp"
+          @click="slider_lv--"
         >
           mdi-minus
         </v-icon>
@@ -25,8 +26,9 @@
 
       <template v-slot:append>
         <v-icon
-          @mousedown="lvIncBtnDown"
-          @mouseup="lvIncBtnUp"
+          @touchstart="lvIncBtnDown"
+          @touchend="lvIncBtnUp"
+          @click="slider_lv++"
         >
           mdi-plus
         </v-icon>
@@ -45,8 +47,9 @@
     >   
       <template v-slot:prepend>
         <v-icon
-          @mousedown="hpDecBtnDown"
-          @mouseup="hpDecBtnUp"
+          @touchstart="hpDecBtnDown"
+          @touchend="hpDecBtnUp"
+          @click="slider_hp--"
         >
           mdi-minus
         </v-icon>
@@ -54,8 +57,9 @@
 
       <template v-slot:append>
         <v-icon
-          @mousedown="hpIncBtnDown"
-          @mouseup="hpIncBtnUp"
+          @touchstart="hpIncBtnDown"
+          @touchend="hpIncBtnUp"
+          @click="slider_hp++"
         >
           mdi-plus
         </v-icon>
@@ -260,41 +264,41 @@
         return this.dragonHP[this.slider_lv] * (this.slider_hp + 1) / 100 - 1;
       },
       calTxt(value) {
-          return Math.floor(value) + "만";
+        return Math.floor(value) + "만";
       },
       fullHPTxt() {
-          return "Lv." + this.slider_lv + " | Full HP: " + this.calTxt(this.dragonHP[this.slider_lv] / 10000);
+        return "Lv." + this.slider_lv + " | Full HP: " + this.calTxt(this.dragonHP[this.slider_lv] / 10000);
       },
       leftHPTxt() {
-          return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP() / 10000) + " ~ " + this.calTxt(this.calMaxHP() / 10000);
+        return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP() / 10000) + " ~ " + this.calTxt(this.calMaxHP() / 10000);
       },
       copyTxt(event) {
-          let target = event.currentTarget.nextSibling.nextSibling;
+        let target = event.currentTarget.nextSibling.nextSibling;
 
-          target.setAttribute('type', 'text');
-          target.select();
+        target.setAttribute('type', 'text');
+        target.select();
 
-          try {
-            document.execCommand('copy');
-            this.alertSuccess = true;
-            setTimeout(() => { this.alertSuccess = false }, 1000);
-          } catch (err) {
-            this.alertFail = true;
-            setTimeout(() => { this.alertFail = false }, 1000);
-          }
+        try {
+          document.execCommand('copy');
+          this.alertSuccess = true;
+          setTimeout(() => { this.alertSuccess = false }, 1000);
+        } catch (err) {
+          this.alertFail = true;
+          setTimeout(() => { this.alertFail = false }, 1000);
+        }
 
-          /* unselect the range */
-          target.setAttribute('type', 'hidden');
-          window.getSelection().removeAllRanges();
-        },
+        /* unselect the range */
+        target.setAttribute('type', 'hidden');
+        window.getSelection().removeAllRanges();
+      },
     },
     created() {
       if (this.$cookies.isKey("cookieLv")) {
-        this.slider_lv = this.$cookies.get("cookieLv");
+        this.slider_lv = Math.min(this.maxLv, this.$cookies.get("cookieLv"));
       }
       
       if (this.$cookies.isKey("cookieHp")) {
-        this.slider_hp = this.$cookies.get("cookieHp");
+        this.slider_hp = Math.min(this.maxHp, this.$cookies.get("cookieHp"));
       }
     },
     watch: {
