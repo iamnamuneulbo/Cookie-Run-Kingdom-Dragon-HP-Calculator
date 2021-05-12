@@ -16,8 +16,6 @@
     >
       <template v-slot:prepend>
         <v-icon
-          @touchstart="lvDecBtnDown"
-          @touchend="lvDecBtnUp"
           @click="slider_lv--"
         >
           mdi-minus
@@ -26,8 +24,6 @@
 
       <template v-slot:append>
         <v-icon
-          @touchstart="lvIncBtnDown"
-          @touchend="lvIncBtnUp"
           @click="slider_lv++"
         >
           mdi-plus
@@ -47,8 +43,6 @@
     >   
       <template v-slot:prepend>
         <v-icon
-          @touchstart="hpDecBtnDown"
-          @touchend="hpDecBtnUp"
           @click="slider_hp--"
         >
           mdi-minus
@@ -57,8 +51,6 @@
 
       <template v-slot:append>
         <v-icon
-          @touchstart="hpIncBtnDown"
-          @touchend="hpIncBtnUp"
           @click="slider_hp++"
         >
           mdi-plus
@@ -136,10 +128,6 @@
       maxHP: 99,
       slider_lv: 20,
       slider_hp: 50,
-      isLvIncBtnDown: false,
-      isLvDecBtnDown: false,
-      isHpIncBtnDown: false,
-      isHpDecBtnDown: false,
       dragonHP: [
         0,
         3000000,
@@ -205,52 +193,6 @@
         ],
     }),
     methods: {
-      lvIncBtnDown() {
-        this.isLvIncBtnDown = true;
-        this.addLv(1);
-      },
-      lvIncBtnUp() {
-        this.isLvIncBtnDown = false;
-      },
-      lvDecBtnDown() {
-        this.isLvDecBtnDown = true;
-        this.addLv(-1);
-      },
-      lvDecBtnUp() {
-        this.isLvDecBtnDown = false;
-      },
-      hpIncBtnDown() {
-        this.isHpIncBtnDown = true;
-        this.addHp(1);
-      },
-      hpIncBtnUp() {
-        this.isHpIncBtnDown = false;
-      },
-      hpDecBtnDown() {
-        this.isHpDecBtnDown = true;
-        this.addHp(-1);
-      },
-      hpDecBtnUp() {
-        this.isHpDecBtnDown = false;
-      },
-      addLv(val) {
-        if (this.isLvDecBtnDown || this.isLvIncBtnDown) {
-          this.slider_lv += val;
-
-          setTimeout(() => {
-            this.addLv(val);
-          }, 200);
-        }
-      },
-      addHp(val) {
-        if (this.isHpDecBtnDown || this.isHpIncBtnDown) {
-          this.slider_hp += val;
-
-          setTimeout(() => {
-            this.addHp(val);
-          }, 200);
-        }
-      },
       setCookieLv() {
         this.$cookies.set("cookieLv", this.slider_lv);
       },
@@ -294,11 +236,11 @@
     },
     created() {
       if (this.$cookies.isKey("cookieLv")) {
-        this.slider_lv = Math.min(this.maxLv, this.$cookies.get("cookieLv"));
+        this.slider_lv = this.$cookies.get("cookieLv");
       }
       
       if (this.$cookies.isKey("cookieHp")) {
-        this.slider_hp = Math.min(this.maxHp, this.$cookies.get("cookieHp"));
+        this.slider_hp = this.$cookies.get("cookieHp");
       }
     },
     watch: {
