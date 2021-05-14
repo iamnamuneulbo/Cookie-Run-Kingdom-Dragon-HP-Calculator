@@ -200,10 +200,10 @@
         this.$cookies.set("cookieHp", this.slider_hp);
       },
       calMinHP() {
-        return this.dragonHP[this.slider_lv] * this.slider_hp / 100;
+        return this.dragonHP[this.slider_lv] * (this.slider_hp - 1) / 100 + 1;
       },
       calMaxHP() {
-        return this.dragonHP[this.slider_lv] * (this.slider_hp + 1) / 100 - 1;
+        return this.dragonHP[this.slider_lv] * (this.slider_hp) / 100;
       },
       calTxt(value) {
         return Math.floor(value) + "만";
