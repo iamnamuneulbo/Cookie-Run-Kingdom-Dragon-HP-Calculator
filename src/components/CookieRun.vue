@@ -74,7 +74,7 @@
     <p class="pl-2 pb-4">
       Lv.{{slider_lv}}<br/>
       {{dragonHP[slider_lv].toLocaleString()}}<br/>
-      {{calTxt(dragonHP[slider_lv] / 10000)}}
+      {{calTxt(dragonHP[slider_lv])}}
     </p>
     <input type="hidden" :value="fullHPTxt()">
 
@@ -94,7 +94,7 @@
     <p class="pl-2 pb-4" @click.stop.prevent="copyTxt">
       Lv.{{slider_lv}} | {{slider_hp}}%<br/>
       {{calMinHP().toLocaleString()}} ~ {{calMaxHP().toLocaleString()}}<br/>
-      {{calTxt(calMinHP() / 10000)}} ~ {{calTxt(calMaxHP() / 10000)}}
+      {{calTxt(calMinHP())}} ~ {{calTxt(calMaxHP())}}
     </p>
     <input type="hidden" :value="leftHPTxt()">
 
@@ -123,7 +123,7 @@
       alertSuccess: false,
       alertFail: false,
       minLv: 1,
-      maxLv: 60,
+      maxLv: 66,
       minHP: 1,
       maxHP: 99,
       slider_lv: 20,
@@ -190,14 +190,24 @@
         84328000,
         86876000,
         89502000,
+        92206000,
+        94994000,
+        97864000,
+        100822000,
+        103870000,
+        107010000
         ],
     }),
     methods: {
       setCookieLv() {
-        this.$cookies.set("cookieLv", this.slider_lv);
+        if (this.slider_lv <= this.maxLv) {
+         this.$cookies.set("cookieLv", this.slider_lv);
+        }
       },
       setCookieHp() {
-        this.$cookies.set("cookieHp", this.slider_hp);
+        if (this.slider_hp > 0 && this.slider_hp < 100) {
+          this.$cookies.set("cookieHp", this.slider_hp);
+        }
       },
       calMinHP() {
         return this.dragonHP[this.slider_lv] * (this.slider_hp - 1) / 100 + 1;
@@ -206,13 +216,18 @@
         return this.dragonHP[this.slider_lv] * (this.slider_hp) / 100;
       },
       calTxt(value) {
-        return Math.floor(value) + "만";
+        if (value < 1e8) {
+          return Math.floor(value / 10000) + "만"
+        }
+        else {
+          return Math.floor(value / 1e8) + "억 " + Math.floor((value % 1e7) / 10000) + "만"
+        }
       },
       fullHPTxt() {
-        return "Lv." + this.slider_lv + " | Full HP: " + this.calTxt(this.dragonHP[this.slider_lv] / 10000);
+        return "Lv." + this.slider_lv + " | Full HP: " + this.calTxt(this.dragonHP[this.slider_lv]);
       },
       leftHPTxt() {
-        return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP() / 10000) + " ~ " + this.calTxt(this.calMaxHP() / 10000);
+        return "Lv." + this.slider_lv + " | " + this.slider_hp + "% Left HP: " + this.calTxt(this.calMinHP()) + " ~ " + this.calTxt(this.calMaxHP());
       },
       copyTxt(event) {
         let target = event.currentTarget.nextSibling.nextSibling;
