@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1 class="pb-10">
-      Cookie Run: Kingdom | Guild Battle | Red Velvet Dragon HP
+      Cookie Run: Kingdom | Guild Battle | Red Velvet Cake Dragon HP
     </h1>
 
     <h3>
